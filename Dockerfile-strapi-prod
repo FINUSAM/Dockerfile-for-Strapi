@@ -1,0 +1,28 @@
+# Use official Node 18 LTS image as base
+FROM node:18
+
+# Set working directory inside container
+WORKDIR /app
+
+# Copy package.json and yarn.lock first (better caching of dependencies)
+COPY package.json yarn.lock ./
+
+# Install dependencies (without dev deps if you want a leaner image)
+RUN yarn install --production
+
+# Copy the rest of your project files
+COPY . .
+
+# Build the Strapi admin panel
+RUN yarn build
+
+# Expose Strapi port
+EXPOSE 1337
+
+# Set environment to production
+ENV NODE_ENV=production
+
+# Start Strapi in production mode
+CMD ["yarn", "start"]
+
+
